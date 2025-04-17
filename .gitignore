@@ -1,0 +1,6 @@
+.env
+node_modules
+ollama-data
+whisper-cache
+*.log
+temp/ 

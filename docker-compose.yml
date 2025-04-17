@@ -1,0 +1,109 @@
+services:
+  llm-service:
+    image: ollama/ollama:latest
+    container_name: ollama-service
+    ports:
+      - "11434:11434" # Ollama API port
+    volumes:
+      - ./ollama-data:/root/.ollama # Persist models
+    environment:
+      - OLLAMA_HOST=0.0.0.0
+    # This script pulls the model on container start
+    entrypoint: >
+      /bin/sh -c "
+        # Install curl for healthcheck
+        apt-get update && apt-get install -y curl
+        # Start Ollama in the background
+        ollama serve &
+        
+        # Wait for Ollama to start
+        sleep 5
+        
+        # Pull the language model we want to use
+        ollama pull tinyllama
+        
+        # Keep container running
+        tail -f /dev/null
+      "
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:11434"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+  # Kokoro TTS Service
+  kokoro-tts:
+    image: ghcr.io/remsky/kokoro-fastapi-cpu:latest
+    container_name: kokoro-tts
+    ports:
+      - "8880:8880" # Expose API port
+    volumes:
+      - ./kokoro-tts/models:/app/src/models # Persist models if needed
+    environment:
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+      # GPU settings can be omitted or adjusted for CPU-only runs
+      - CUDA_VISIBLE_DEVICES=${CUDA_VISIBLE_DEVICES:-}
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8880/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  whisper-stt:
+    image: onerahmet/openai-whisper-asr-webservice:latest
+    container_name: whisper-stt
+    ports:
+      - "9000:9000"
+    environment:
+      ASR_ENGINE: openai_whisper # Options: openai_whisper, faster_whisper, whisperx
+      ASR_MODEL: tiny # Model size (tiny, base, small, medium, large-v3)
+      ASR_DEVICE: cpu # Use cpu since we're not using GPU
+      MODEL_IDLE_TIMEOUT: 0 # Keep model loaded indefinitely
+    volumes:
+      - ./whisper-cache:/root/.cache # Persist model downloads
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Express.js Backend
+  backend:
+    build:
+      context: ./backend
+    container_name: backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - ./backend/audio:/app/audio # Persist generated audio
+      - node_modules:/app/node_modules
+    command: npm run dev
+    environment:
+      - PORT=3000
+      - TTS_SERVICE_URL=http://kokoro-tts:8880
+      - STT_SERVICE_URL=http://whisper-stt:9000
+      - OLLAMA_API_URL=http://llm-service:11434
+    depends_on:
+      kokoro-tts:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health/backend"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+# Define a custom network for all services
+networks:
+  default:
+    name: languageWhisperer
+
+volumes:
+  node_modules:
