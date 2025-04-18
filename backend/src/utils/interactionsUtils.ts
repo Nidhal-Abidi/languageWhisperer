@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import path from "path";
-import fs from "node:fs"
+import fs from "node:fs";
 import multer from "multer";
 import { getDirectories } from "./sessionUtils";
 
-export const createNewInteractionsSubFolder = async (sessionId:string) => {
+export const createNewInteractionsSubFolder = async (sessionId: string) => {
   const interactionsDirPath = path.join(
     __dirname,
     "../../audio/sessions",
@@ -31,13 +31,15 @@ export const createNewInteractionsSubFolder = async (sessionId:string) => {
   }
 
   await fs.promises.mkdir(interactionsSubFolder, { recursive: true });
-  
-  return interactionsSubFolder
-}
+
+  return interactionsSubFolder;
+};
 
 export const storage = multer.diskStorage({
   destination: async (req, file, cb) => {
-    const interactionsSubFolder = await createNewInteractionsSubFolder(req.params.session_id)
+    const interactionsSubFolder = await createNewInteractionsSubFolder(
+      req.params.session_id
+    );
     cb(null, interactionsSubFolder);
   },
   filename: (req, file, cb) => {
@@ -45,17 +47,21 @@ export const storage = multer.diskStorage({
   },
 });
 
-export const fileFilter = (req:Request, file:Express.Multer.File, cb:multer.FileFilterCallback) => {
+export const fileFilter = (
+  req: Request,
+  file: Express.Multer.File,
+  cb: multer.FileFilterCallback
+) => {
   if (file.fieldname !== "userRecording") {
-    return cb(new Error("Field name must be 'userRecording'"))
+    return cb(new Error("Field name must be 'userRecording'"));
   }
-  
-  if (!['audio/webm', 'audio/mpeg'].includes(file.mimetype)) {
-    return cb(new Error("File must be a WebM or MP3 audio recording"))
+
+  if (!["audio/webm", "audio/mpeg"].includes(file.mimetype)) {
+    return cb(new Error("File must be a WebM or MP3 audio recording"));
   }
-  
+
   cb(null, true);
-}
+};
 
 export const validateNewInteraction = (
   req: Request,
@@ -73,8 +79,7 @@ export const validateNewInteraction = (
   );
   if (!fs.existsSync(sessionsDirPath)) {
     res.status(404).send(`The requested session ${session_id} doesn't exist`);
-    return 
+    return;
   }
-
   next();
 };
