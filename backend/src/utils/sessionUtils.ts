@@ -2,7 +2,9 @@ import fs from "node:fs";
 import path from "path";
 import { readdir } from "fs/promises";
 
-import { Session } from "../schema/session.schema";
+import { Session, sessionSchema } from "../schema/session.schema";
+import {Request, Response, NextFunction } from "express";
+
 export const saveSessionData = (session_id: string, data: Session) => {
   // Save the data of the session into backend/audio/sessions/{session_id}/meta.json
   const sessionsDirPath = path.join(
@@ -23,6 +25,21 @@ export const saveSessionData = (session_id: string, data: Session) => {
     console.error("Error saving session data:", error);
     throw new Error("Failed to create session directory");
   }
+};
+
+
+export const validateNewSession = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const result = sessionSchema.safeParse(req.body);
+  if (!result.success) {
+    res.status(400).send(result.error);
+    return;
+  }
+  res.locals.validatedNewSession = result.data;
+  next();
 };
 
 export const getDirectories = async (sourceFolder: string) =>

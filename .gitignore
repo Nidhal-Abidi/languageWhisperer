@@ -4,3 +4,4 @@ ollama-data
 whisper-cache
 *.log
 temp/ 
+audio

@@ -82,8 +82,7 @@ services:
       - "3000:3000"
     volumes:
       - ./backend:/app
-      - ./backend/audio:/app/audio # Persist generated audio
-      - node_modules:/app/node_modules
+      - /app/node_modules
     command: npm run dev
     environment:
       - PORT=3000
@@ -104,6 +103,3 @@ services:
 networks:
   default:
     name: languageWhisperer
-
-volumes:
-  node_modules:
