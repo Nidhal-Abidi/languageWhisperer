@@ -17,7 +17,7 @@ const upload = multer({
   },
 });
 
-// 3. Transcribe the audio using STT, create the response using LLM, generate audio using TTS
+// 3. create the response using LLM, generate audio using TTS
 // 4. Return last interactions folder path (eg. `backend/audio/sessions/:session_id/interactions/003`)
 /* 
 All the files inside of the interactions folder will have the same files after this request:

@@ -1,8 +1,8 @@
 import { Router } from "express";
 import textToSpeechRouter from "./textToSpeech";
-import languagePracticeRouter from "./languagePractice";
+import languagePracticeRouter from "./llm";
 import sessionRouter from "./session";
-import interactionsRouter from "./interactions"
+import interactionsRouter from "./interactions";
 
 const router = Router();
 

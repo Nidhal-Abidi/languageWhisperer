@@ -1,5 +1,7 @@
-import { OLLAMA_API_URL } from "..";
+import { NextFunction, Request, Response, Router } from "express";
 import axios from "axios";
+import { OLLAMA_API_URL } from "..";
+import { generateResponseSchema } from "../schema/llm.schema";
 
 type Role = "assistant" | "user" | "system";
 
@@ -155,6 +157,20 @@ export class LLMClient {
     this.updateMessages(conversation);
 
     return conversation;
+  };
+
+  validateGenerateResponseBody = (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const result = generateResponseSchema.safeParse(req.body);
+    if (!result.success) {
+      res.status(400).send(result.error);
+      return;
+    }
+    res.locals.validatedGenerateResponseBody = result.data;
+    next();
   };
 
   /**

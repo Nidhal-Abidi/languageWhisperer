@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { generateResponseSchema } from "./languagePractice.schema";
+import { generateResponseSchema } from "./llm.schema";
 
 export const sessionSchema = generateResponseSchema.omit({ userMessage: true });
 

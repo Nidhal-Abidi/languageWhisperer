@@ -1,23 +1,8 @@
-import { NextFunction, Request, Response, Router } from "express";
+import { Router } from "express";
 import { LLMClient } from "../utils/LLMClient";
-import { generateResponseSchema } from "../schema/languagePractice.schema";
 
 const router = Router();
 const llm = new LLMClient();
-
-const validateGenerateResponseBody = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const result = generateResponseSchema.safeParse(req.body);
-  if (!result.success) {
-    res.status(400).send(result.error);
-    return;
-  }
-  res.locals.validatedGenerateResponseBody = result.data;
-  next();
-};
 
 router.post("/api/reset-conversation", (req, res) => {
   llm.resetTheConversation();
@@ -26,7 +11,7 @@ router.post("/api/reset-conversation", (req, res) => {
 
 router.post(
   "/api/generate-response",
-  validateGenerateResponseBody,
+  llm.validateGenerateResponseBody,
   async (req, res) => {
     const {
       userMessage,
