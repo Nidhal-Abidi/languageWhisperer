@@ -63,7 +63,7 @@ export const fileFilter = (
   cb(null, true);
 };
 
-export const validateNewInteraction = (
+export const validateSessionId = (
   req: Request,
   res: Response,
   next: NextFunction
@@ -72,14 +72,57 @@ export const validateNewInteraction = (
   const {
     params: { session_id },
   } = req;
-  const sessionsDirPath = path.join(
-    __dirname,
-    "../../audio/sessions",
-    session_id
-  );
-  if (!fs.existsSync(sessionsDirPath)) {
+  const sessionPath = path.join(__dirname, "../../audio/sessions", session_id);
+  if (!fs.existsSync(sessionPath)) {
     res.status(404).send(`The requested session ${session_id} doesn't exist`);
     return;
   }
+  res.locals.sessionPath = sessionPath;
+  next();
+};
+
+export const loadSessionMeta = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const metaDataFilePath = res.locals.sessionPath + "/meta.json";
+  res.locals.sessionMetaData = JSON.parse(
+    fs.readFileSync(metaDataFilePath, "utf-8")
+  );
+  next();
+};
+
+export const saveTranslationToJson = (
+  original: string,
+  translation: string,
+  filePath: string
+) => {
+  fs.writeFileSync(
+    filePath,
+    JSON.stringify({ original, translation }),
+    "utf-8"
+  );
+};
+
+export const saveInteractionTranscription = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const llmResponse = res.locals.llmResponse;
+  // Save the interaction into user.json & assistant.json
+  const userFilePath = req.file!.destination + "/user.json";
+  const assistantFilePath = req.file!.destination + "/assistant.json";
+  saveTranslationToJson(
+    llmResponse.userOriginal,
+    llmResponse.userTranslation,
+    userFilePath
+  );
+  saveTranslationToJson(
+    llmResponse.assistantOriginal,
+    llmResponse.assistantTranslation,
+    assistantFilePath
+  );
   next();
 };

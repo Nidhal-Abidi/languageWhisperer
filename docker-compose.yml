@@ -20,7 +20,7 @@ services:
         sleep 5
         
         # Pull the language model we want to use
-        ollama pull tinyllama
+        ollama pull phi3:mini
         
         # Keep container running
         tail -f /dev/null

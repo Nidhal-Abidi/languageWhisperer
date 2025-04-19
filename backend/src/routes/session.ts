@@ -25,5 +25,4 @@ router.post("/api/sessions", validateNewSession, (req, res) => {
   }
 });
 
-
 export default router;

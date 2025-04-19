@@ -4,7 +4,9 @@ import path from "path";
 import FormData from "form-data";
 import { STT_SERVICE_URL } from "..";
 
-export const transcribeAudio = async (audioFilePath: string) => {
+export const transcribeAudio = async (
+  audioFilePath: string
+): Promise<string> => {
   const formData = new FormData();
   const audioFile = fs.readFileSync(audioFilePath);
 

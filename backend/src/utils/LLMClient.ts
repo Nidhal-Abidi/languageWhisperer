@@ -75,6 +75,7 @@ export class LLMClient {
     translationLanguage?: string,
     languageProficiency?: string
   ) => {
+    console.log("***LLM _ MSG --> ", userMessage);
     // For the very first call, set up the conversation with the initial context.
     if (this.messagesHistory.length === 0) {
       // If any of the initial parameters are missing, throw an error.
@@ -89,17 +90,27 @@ export class LLMClient {
         );
       }
       // Build the initial developer message.
-      const initialInstruction = `You are an AI language practice partner for language learners.
-        Scenario: ${scenario}.
-        Conversation Language: ${conversationLanguage}.
-        Translation Language: ${translationLanguage}.
-        Language Proficiency: ${languageProficiency}.
-        Respond in a roleplay style that suits these parameters.
-        Always format your reply in valid JSON with keys:
-        "userOriginal": "The words that the user have said in ${conversationLanguage}"
-        "userTranslation": "The words that the user have said in ${translationLanguage}"
-        "assistantOriginal": "Your response in ${conversationLanguage}",
-        "assistantTranslation": "${translationLanguage} translation of your response".`;
+      const initialInstruction = `You are an AI language practice partner helping users learn ${conversationLanguage}. Your job is to have natural conversations and provide translations.
+
+PARAMETERS:
+- Scenario: ${scenario}
+- User's proficiency: ${languageProficiency} level in ${conversationLanguage}
+- Always respond in ${conversationLanguage} first, then provide a ${translationLanguage} translation
+
+OUTPUT FORMAT:
+Provide a valid JSON object with these exact keys:
+{
+  "userTranslation": "", // Your accurate translation of user's message to ${translationLanguage}
+  "assistantOriginal": "", // Your response in ${conversationLanguage} (keep appropriate to ${languageProficiency} level)
+  "assistantTranslation": "" // Your exact translation of your response to ${translationLanguage}
+}
+
+GUIDELINES:
+- Keep responses concise (2-4 sentences) to fit in limited context window
+- Match language complexity to user's ${languageProficiency} level
+- Focus on accuracy of translations rather than creative elaboration
+- Stay in character for the ${scenario} scenario
+- Always respond to the specific content of the user's message`;
 
       // Append the initial developer message.
       this.messagesHistory.push({
@@ -149,7 +160,7 @@ export class LLMClient {
       assistantOriginal: string;
       assistantTranslation: string;
     } = {
-      userOriginal: llmResponse.userOriginal,
+      userOriginal: userMessage,
       userTranslation: llmResponse.userTranslation,
       assistantOriginal: llmResponse.assistantOriginal,
       assistantTranslation: llmResponse.assistantTranslation,
