@@ -3,6 +3,9 @@ import path from "path";
 import fs from "node:fs";
 import multer from "multer";
 import { getDirectories } from "./sessionUtils";
+import axios from "axios";
+import { TTS_SERVICE_URL } from "..";
+import { availableVoices, languageCodes } from "../schema/tts.schema";
 
 export const createNewInteractionsSubFolder = async (sessionId: string) => {
   const interactionsDirPath = path.join(
@@ -127,8 +130,53 @@ export const saveInteractionTranscription = (
   next();
 };
 
-export const generateAudioResponseFromText = (
+export const generateAudioResponseFromText = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {};
+) => {
+  try {
+    const chosenAudioVoice = getAudioVoice(
+      res.locals.sessionMetaData.conversationLanguage
+    );
+    const { data } = await axios({
+      method: "post",
+      url: `${TTS_SERVICE_URL}/v1/audio/speech`,
+      data: {
+        input: res.locals.llmResponse.assistantOriginal,
+        voice: chosenAudioVoice,
+      },
+      responseType: "arraybuffer",
+    });
+    // Define a file name and path; adjust the directory as needed.
+    const outputFileName = "assistant.mp3";
+    const outputPath = path.join(
+      res.locals.interactionsDirPath,
+      outputFileName
+    );
+
+    // Write the binary data to file
+    fs.writeFileSync(outputPath, data);
+    console.log("Audio file saved at:", outputPath);
+    next();
+  } catch (error) {
+    console.error("Error during TTS generation:", error);
+    res.status(500).send("Error generating voice");
+  }
+};
+
+type AvailableLanguages =
+  | "american-english"
+  | "british-english"
+  | "spanish"
+  | "portuguese"
+  | "french"
+  | "japanese"
+  | "hindi"
+  | "italian"
+  | "mandarin";
+
+const getAudioVoice = (language: AvailableLanguages) => {
+  const currentLanguageCode = languageCodes[language];
+  return availableVoices.find((voice) => voice.startsWith(currentLanguageCode));
+};

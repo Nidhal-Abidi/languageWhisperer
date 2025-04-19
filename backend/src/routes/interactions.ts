@@ -5,6 +5,7 @@ import {
   validateSessionId,
   loadSessionMeta,
   saveInteractionTranscription,
+  generateAudioResponseFromText,
 } from "../utils/interactionsUtils";
 import multer from "multer";
 import { transcribeAudio } from "../utils/STTUtils";
@@ -57,12 +58,18 @@ router.post(
       metaData.languageProficiency
     );
     res.locals.llmResponse = llmResponse;
-    console.log("LLM Response -->", llmResponse);
+    res.locals.interactionsDirPath = req.file!.destination;
     next();
   },
   saveInteractionTranscription,
+  generateAudioResponseFromText,
   (req, res, next) => {
-    res.status(201).json({ message: "Audio file uploaded successfully" });
+    res
+      .status(201)
+      .json({
+        message:
+          "Interaction completed successfully, Waiting for the user to reply!",
+      });
   }
 );
 
