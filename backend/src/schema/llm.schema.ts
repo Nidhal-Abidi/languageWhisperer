@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { supportedLanguages } from "./textToSpeech.schema";
+import { supportedLanguages } from "./tts.schema";
 
 export const generateResponseSchema = z
   .object({

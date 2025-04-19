@@ -3,7 +3,7 @@ import {
   Languages,
   speechGenerationBodySchema,
   voiceQuerySchema,
-} from "../schema/textToSpeech.schema";
+} from "../schema/tts.schema";
 import { NextFunction, Request, Response } from "express";
 
 export const validateQuery = (
