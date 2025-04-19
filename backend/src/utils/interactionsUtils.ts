@@ -126,3 +126,9 @@ export const saveInteractionTranscription = (
   );
   next();
 };
+
+export const generateAudioResponseFromText = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {};

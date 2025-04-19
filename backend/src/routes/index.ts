@@ -1,5 +1,5 @@
 import { Router } from "express";
-import textToSpeechRouter from "./textToSpeech";
+import textToSpeechRouter from "./tts";
 import languagePracticeRouter from "./llm";
 import sessionRouter from "./session";
 import interactionsRouter from "./interactions";
