@@ -86,14 +86,6 @@ export const ConversationScenarios = () => {
         placeholder={`Describe your custom scenario 1-3 sentences. For best results: \n- Be specific about the setting and goal (e.g., "Ordering food at a cafe") \n- Mention any roles involved (e.g., "I'm a tourist asking for directions") \n- Include key topics to discuss (e.g., "Discussing weekend plans with a colleague")\n\nExample: "I'm at a job interview for a marketing position. The interviewer is asking about my experience and qualifications."`}
         rows={8}
       ></textarea>
-      <div className="flex px-4 py-3 justify-center">
-        <button
-          type="submit"
-          className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 bg-[#5583B4] text-white text-sm font-bold leading-normal tracking-[0.015em] transition-all duration-300 ease-in-out hover:bg-[#304D6D]"
-        >
-          Start Practicing
-        </button>
-      </div>
     </>
   );
 };
