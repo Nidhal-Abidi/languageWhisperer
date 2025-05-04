@@ -1,12 +1,11 @@
+import "/node_modules/flag-icons/css/flag-icons.min.css";
 import "./App.css";
-import { ConversationPractice } from "./components/ConversationPractice";
-import { Header } from "./components/Header";
+import { Form } from "./components/form/Form";
 
 function App() {
   return (
     <div>
-      <Header />
-      <ConversationPractice />
+      <Form />
     </div>
   );
 }
