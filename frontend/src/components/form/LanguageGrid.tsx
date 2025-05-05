@@ -1,7 +1,11 @@
+import { FieldValues, UseFormRegister } from "react-hook-form";
+
 export const LanguageGrid = ({
   type,
+  register,
 }: {
   type: "conversation-language" | "translation-language";
+  register: UseFormRegister<FieldValues>;
 }) => {
   const languages = [
     { code: "japanese", text: "Japanese", flag: "fi-jp" },
@@ -32,6 +36,16 @@ export const LanguageGrid = ({
             >
               <input
                 type="radio"
+                {...register(type, {
+                  required: {
+                    value: true,
+                    message: `${
+                      type === "conversation-language"
+                        ? "Conversation Language"
+                        : "Language of Translation."
+                    } is required!`,
+                  },
+                })}
                 name={type}
                 value={language.code}
                 className="absolute opacity-0 w-0 h-0"

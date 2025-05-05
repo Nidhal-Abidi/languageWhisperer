@@ -1,18 +1,34 @@
+import { useForm } from "react-hook-form";
 import { ConversationScenarios } from "./ConversationScenarios";
 import { LanguageGrid } from "./LanguageGrid";
 import { LanguageProficiency } from "./LanguageProficiency";
 
 export const FormContainer = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
+  console.log(errors);
+  const afterSubmit = (data) => {
+    console.log(data);
+    alert("Success");
+  };
+
   return (
-    <form className="px-40 flex flex-1 justify-center py-5">
+    <form
+      onSubmit={handleSubmit(afterSubmit)}
+      className="px-40 flex flex-1 justify-center py-5"
+    >
       <div className="flex flex-col w-[512px] py-5 max-w-[960px] flex-1">
         <h2 className="text-[#111418] tracking-light text-[28px] font-bold leading-tight px-4 text-center pb-3 pt-5">
           Fill the form
         </h2>
-        <LanguageProficiency />
-        <LanguageGrid type="conversation-language" />
-        <LanguageGrid type="translation-language" />
-        <ConversationScenarios />
+        <LanguageProficiency register={register} />
+        <LanguageGrid type="conversation-language" register={register} />
+        <LanguageGrid type="translation-language" register={register} />
+        <ConversationScenarios register={register} />
         <div className="flex px-4 py-3 justify-center">
           <button
             type="submit"

@@ -1,8 +1,14 @@
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
+import { FieldValues, UseFormRegister } from "react-hook-form";
+import { CustomConversationScenario } from "./CustomConversationScenario";
 
-export const ConversationScenarios = () => {
+export const ConversationScenarios = ({
+  register,
+}: {
+  register: UseFormRegister<FieldValues>;
+}) => {
   const [showCustomScenario, setShowCustomScenario] = useState(false);
   const scenarios: { code: string; text: string; icon: IconProp }[] = [
     {
@@ -59,6 +65,12 @@ export const ConversationScenarios = () => {
             >
               <input
                 type="radio"
+                {...register("scenario", {
+                  required: {
+                    value: true,
+                    message: "Scenario is required",
+                  },
+                })}
                 name="scenario"
                 value={scenario.code}
                 className="absolute opacity-0 w-0 h-0"
@@ -77,15 +89,10 @@ export const ConversationScenarios = () => {
           );
         })}
       </div>
-      <textarea
-        id="customScenarioInput"
-        name="customScenario"
-        className={`border border-[#dce0e5] rounded-lg m-4 p-2  ${
-          showCustomScenario ? "" : "hidden"
-        } `}
-        placeholder={`Describe your custom scenario 1-3 sentences. For best results: \n- Be specific about the setting and goal (e.g., "Ordering food at a cafe") \n- Mention any roles involved (e.g., "I'm a tourist asking for directions") \n- Include key topics to discuss (e.g., "Discussing weekend plans with a colleague")\n\nExample: "I'm at a job interview for a marketing position. The interviewer is asking about my experience and qualifications."`}
-        rows={8}
-      ></textarea>
+      <CustomConversationScenario
+        register={register}
+        showCustomScenario={showCustomScenario}
+      />
     </>
   );
 };
