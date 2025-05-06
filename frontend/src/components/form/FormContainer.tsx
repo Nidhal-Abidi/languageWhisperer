@@ -2,19 +2,42 @@ import { useForm } from "react-hook-form";
 import { ConversationScenarios } from "./ConversationScenarios";
 import { LanguageGrid } from "./LanguageGrid";
 import { LanguageProficiency } from "./LanguageProficiency";
+import { useEffect, useRef, useState } from "react";
+import { useFormErrorScroll } from "./useFormErrorScroll";
 
 export const FormContainer = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
+    setValue,
+    watch,
   } = useForm();
 
-  console.log(errors);
-  const afterSubmit = (data) => {
-    console.log(data);
-    alert("Success");
+  const [customScenarioRequired, setCustomScenarioRequired] = useState(false);
+  const refs = {
+    "language-proficiency": useRef<HTMLDivElement>(null),
+    "conversation-language": useRef<HTMLDivElement>(null),
+    "translation-language": useRef<HTMLDivElement>(null),
+    scenario: useRef<HTMLDivElement>(null),
   };
+
+  useFormErrorScroll(errors, refs);
+
+  const selectedScenario = watch("scenario");
+
+  const afterSubmit = (data) => {
+    console.log("Form submitted successfully:", data);
+  };
+
+  useEffect(() => {
+    setCustomScenarioRequired(selectedScenario === "custom-scenario");
+
+    // Clear custom scenario value when switching away from custom scenario
+    if (selectedScenario !== "custom-scenario") {
+      setValue("customScenario", "");
+    }
+  }, [selectedScenario, setValue]);
 
   return (
     <form
@@ -25,16 +48,36 @@ export const FormContainer = () => {
         <h2 className="text-[#111418] tracking-light text-[28px] font-bold leading-tight px-4 text-center pb-3 pt-5">
           Fill the form
         </h2>
-        <LanguageProficiency register={register} />
-        <LanguageGrid type="conversation-language" register={register} />
-        <LanguageGrid type="translation-language" register={register} />
-        <ConversationScenarios register={register} />
+        <LanguageProficiency
+          register={register}
+          errorMessage={errors["language-proficiency"]?.message as string}
+          ref={refs["language-proficiency"]}
+        />
+        <LanguageGrid
+          type="conversation-language"
+          register={register}
+          errorMessage={errors["conversation-language"]?.message as string}
+          ref={refs["conversation-language"]}
+        />
+        <LanguageGrid
+          type="translation-language"
+          register={register}
+          errorMessage={errors["translation-language"]?.message as string}
+          ref={refs["translation-language"]}
+        />
+        <ConversationScenarios
+          register={register}
+          errorMessage={errors["scenario"]?.message as string}
+          customScenarioError={errors.customScenario?.message as string}
+          ref={refs["scenario"]}
+        />
         <div className="flex px-4 py-3 justify-center">
           <button
             type="submit"
-            className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 bg-[#5583B4] text-white text-sm font-bold leading-normal tracking-[0.015em] transition-all duration-300 ease-in-out hover:bg-[#304D6D]"
+            disabled={isSubmitting}
+            className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 flex-1 bg-[#5583B4] text-white text-sm font-bold leading-normal tracking-[0.015em] transition-all duration-300 ease-in-out hover:bg-[#304D6D] disabled:bg-gray-400"
           >
-            Start Practicing
+            {isSubmitting ? "Submitting..." : "Start Practicing"}
           </button>
         </div>
       </div>

@@ -1,13 +1,19 @@
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { RefObject, useState } from "react";
 import { FieldValues, UseFormRegister } from "react-hook-form";
 import { CustomConversationScenario } from "./CustomConversationScenario";
 
 export const ConversationScenarios = ({
   register,
+  errorMessage,
+  customScenarioError,
+  ref,
 }: {
   register: UseFormRegister<FieldValues>;
+  errorMessage?: string;
+  customScenarioError?: string;
+  ref: RefObject<HTMLDivElement | null>;
 }) => {
   const [showCustomScenario, setShowCustomScenario] = useState(false);
   const scenarios: { code: string; text: string; icon: IconProp }[] = [
@@ -52,7 +58,7 @@ export const ConversationScenarios = ({
   };
 
   return (
-    <>
+    <div ref={ref} className={`rounded-lg ${errorMessage ? "bg-red-50" : ""}`}>
       <h3 className="text-[#111418] text-lg font-bold leading-tight tracking-[-0.015em] px-4 pb-2 pt-4">
         Conversation Scenarios
       </h3>
@@ -61,7 +67,9 @@ export const ConversationScenarios = ({
           return (
             <label
               key={idx}
-              className="flex flex-1 gap-3 rounded-lg border border-[#dce0e5] bg-white p-4 flex-col hover:bg-[#D3D3D3] transition-all duration-300 ease-in-out cursor-pointer [&:has(input:checked)]:bg-[#D3D3D3]"
+              className={`flex flex-1 gap-3 rounded-lg border ${
+                errorMessage ? "border-red-400" : "border-[#dce0e5]"
+              } bg-white p-4 flex-col hover:bg-[#D3D3D3] transition-all duration-300 ease-in-out cursor-pointer [&:has(input:checked)]:bg-[#D3D3D3]`}
             >
               <input
                 type="radio"
@@ -79,7 +87,9 @@ export const ConversationScenarios = ({
               <div>
                 <FontAwesomeIcon
                   icon={scenario.icon}
-                  className="text-gray-600"
+                  className={`${
+                    errorMessage ? "text-red-500" : "text-gray-600"
+                  }`}
                 />
               </div>
               <h2 className="text-[#111418] text-base font-bold leading-tight">
@@ -92,7 +102,13 @@ export const ConversationScenarios = ({
       <CustomConversationScenario
         register={register}
         showCustomScenario={showCustomScenario}
+        errorMessage={customScenarioError}
       />
-    </>
+      {errorMessage && (
+        <div className="bg-red-500 text-white text-sm p-2 rounded-b-lg">
+          {errorMessage}
+        </div>
+      )}
+    </div>
   );
 };
