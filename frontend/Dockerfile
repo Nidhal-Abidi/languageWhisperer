@@ -6,6 +6,9 @@ WORKDIR /app
 COPY package.json package-lock.json* ./
 RUN npm install
 
+# **Install curl for the healthcheck**
+RUN apk add --no-cache curl
+
 # Copy rest of the source
 COPY . .
 
