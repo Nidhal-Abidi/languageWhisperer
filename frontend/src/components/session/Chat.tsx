@@ -64,7 +64,7 @@ export function Chat() {
   };
 
   return (
-    <>
+    <div className=" flex flex-col max-w-[960px] flex-1">
       <div className="overflow-y-scroll p-2 max-h-72 flex flex-col w-full mx-auto bg-gray-50 rounded-lg overflow-hidden">
         {messages.map((message, index) => (
           <div
@@ -135,11 +135,6 @@ export function Chat() {
           </div>
         ))}
       </div>
-      <div className="flex px-4 py-3 justify-center">
-        <button className="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-12 px-5 bg-[#1980e6] text-white text-base font-bold leading-normal tracking-[0.015em]">
-          Pick the parameters for a new conversation
-        </button>
-      </div>
-    </>
+    </div>
   );
 }
