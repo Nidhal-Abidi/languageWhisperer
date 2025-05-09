@@ -58,3 +58,36 @@ export const getScenarioDescription = (scenario: Scenario) => {
       throw Error(`Scenario (${scenario}) doesn't exist!`);
   }
 };
+
+export type Languages =
+  | "japanese"
+  | "spanish"
+  | "french"
+  | "british-english"
+  | "american-english"
+  | "portuguese"
+  | "hindi"
+  | "italian"
+  | "mandarin";
+
+export type LanguageProficiency = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
+
+export const languages = [
+  { code: "japanese", text: "Japanese", flag: "fi-jp" },
+  { code: "spanish", text: "Spanish", flag: "fi-es" },
+  { code: "french", text: "French", flag: "fi-fr" },
+  { code: "british-english", text: "British English", flag: "fi-gb" },
+  { code: "american-english", text: "American English", flag: "fi-us" },
+  { code: "portuguese", text: "Portuguese", flag: "fi-pt" },
+  { code: "hindi", text: "Hindi", flag: "fi-in" },
+  { code: "italian", text: "Italian", flag: "fi-it" },
+  { code: "mandarin", text: "Mandarin", flag: "fi-cn" },
+];
+
+export const getFlag = (languageCode: string) => {
+  const requestedLanguage = languages.find(
+    (lang) => lang.code === languageCode
+  );
+  if (!requestedLanguage) throw new Error("Flag not found!");
+  return requestedLanguage.flag;
+};

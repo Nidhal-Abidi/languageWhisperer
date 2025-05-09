@@ -1,5 +1,6 @@
 import { RefObject } from "react";
 import { FieldValues, UseFormRegister } from "react-hook-form";
+import { languages } from "../../utils/constants";
 
 export const LanguageGrid = ({
   type,
@@ -12,18 +13,6 @@ export const LanguageGrid = ({
   errorMessage?: string;
   ref: RefObject<HTMLDivElement | null>;
 }) => {
-  const languages = [
-    { code: "japanese", text: "Japanese", flag: "fi-jp" },
-    { code: "spanish", text: "Spanish", flag: "fi-es" },
-    { code: "french", text: "French", flag: "fi-fr" },
-    { code: "british-english", text: "British English", flag: "fi-gb" },
-    { code: "american-english", text: "American English", flag: "fi-us" },
-    { code: "portuguese", text: "Portuguese", flag: "fi-pt" },
-    { code: "hindi", text: "Hindi", flag: "fi-in" },
-    { code: "italian", text: "Italian", flag: "fi-it" },
-    { code: "mandarin", text: "Mandarin", flag: "fi-cn" },
-  ];
-
   return (
     <div
       ref={ref}

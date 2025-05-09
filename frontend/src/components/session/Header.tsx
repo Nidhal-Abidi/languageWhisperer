@@ -1,4 +1,18 @@
-export const Header = () => {
+import { ArrowRightLeft } from "lucide-react";
+import { getFlag, LanguageProficiency, Languages } from "../../utils/constants";
+
+export const Header = ({
+  conversationLanguage,
+  translationLanguage,
+  proficiencyLevel,
+}: {
+  conversationLanguage: Languages;
+  translationLanguage: Languages;
+  proficiencyLevel: LanguageProficiency;
+}) => {
+  const conversationLanguageFlag = getFlag(conversationLanguage);
+  const translationLanguageFlag = getFlag(translationLanguage);
+
   return (
     <header className="sticky top-0 flex items-center justify-between  border-b border-solid border-b-[#f0f2f4] bg-white px-10 py-3">
       <div className="flex items-center gap-4 text-[#111418]">
@@ -21,13 +35,17 @@ export const Header = () => {
         </h2>
       </div>
       <div className="flex flex-1 justify-end wrap-normal gap-8">
-        <div className="flex gap-2">
-          <span className="rounded-xl p-4 bg-[#f0f2f4] text-[#111418] text-sm font-bold leading-normal tracking-[0.015em] cursor-not-allowed">
-            Conversation Flag &lt;--&gt; Translation Flag
-          </span>
-          <span className="rounded-xl p-4 bg-[#f0f2f4] text-[#111418] text-sm font-bold leading-normal tracking-[0.015em] cursor-not-allowed">
-            &lt;- Scenario -&gt;
-          </span>
+        <div className="flex items-center rounded-xl p-4 bg-[#f0f2f4] text-[#111418] text-sm font-bold leading-normal tracking-[0.015em] cursor-not-allowed">
+          <span
+            className={`aspect-square w-10 shrink-0 rounded-lg border border-[#dce0e5] bg-center bg-no-repeat bg-cover ${conversationLanguageFlag}`}
+          />
+          <ArrowRightLeft />
+          <span
+            className={`aspect-square w-10 shrink-0 rounded-lg border border-[#dce0e5] bg-center bg-no-repeat bg-cover ${translationLanguageFlag}`}
+          />
+        </div>
+        <div className="flex items-center rounded-xl p-4 bg-[#f0f2f4] text-[#111418] text-sm font-bold leading-normal tracking-[0.015em] cursor-not-allowed">
+          {proficiencyLevel}
         </div>
       </div>
     </header>

@@ -9,7 +9,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Form />} />
-        <Route path="/session/:sessionId" element={<Session />} />
+        <Route path="/sessions/:sessionId" element={<Session />} />
         {/* Instead of a 404 Error page, move to the Form page + remove the wrong pathname */}
         <Route path="*" element={<Form />} />
       </Routes>
