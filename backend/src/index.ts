@@ -1,17 +1,21 @@
 import express from "express";
-import router from "./routes";
+import router from "./routes/index.js";
+import cors from "cors";
+import { env } from "./config/env.js";
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-export const TTS_SERVICE_URL =
-  process.env.TTS_SERVICE_URL || "http://kokoro-tts:8880";
+const PORT = env.PORT;
+export const TTS_SERVICE_URL = env.TTS_SERVICE_URL;
+export const OLLAMA_API_URL = env.OLLAMA_API_URL;
+export const STT_SERVICE_URL = env.STT_SERVICE_URL;
 
-export const OLLAMA_API_URL =
-  process.env.OLLAMA_API_URL || "http://llm-service:11434";
-
-export const STT_SERVICE_URL =
-  process.env.STT_SERVICE_URL || "http://whisper-stt:9000";
-
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.json());
 app.use(router);
 

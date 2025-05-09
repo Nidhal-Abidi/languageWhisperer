@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { v4 as uuidv4 } from "uuid";
-import { saveSessionData, validateNewSession } from "../utils/sessionUtils";
+import { saveSessionData, validateNewSession } from "../utils/sessionUtils.js";
 
 const router = Router();
 

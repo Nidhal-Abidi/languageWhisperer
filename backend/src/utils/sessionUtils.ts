@@ -1,12 +1,16 @@
 import fs from "node:fs";
-import path from "path";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 import { readdir } from "fs/promises";
 
-import { Session, sessionSchema } from "../schema/session.schema";
-import {Request, Response, NextFunction } from "express";
+import { Session, sessionSchema } from "../schema/session.schema.js";
+import { Request, Response, NextFunction } from "express";
 
 export const saveSessionData = (session_id: string, data: Session) => {
   // Save the data of the session into backend/audio/sessions/{session_id}/meta.json
+  const __filename = fileURLToPath(import.meta.url);
+  // Get the directory name from the file path
+  const __dirname = dirname(__filename);
   const sessionsDirPath = path.join(
     __dirname,
     "../../audio/sessions",
@@ -26,7 +30,6 @@ export const saveSessionData = (session_id: string, data: Session) => {
     throw new Error("Failed to create session directory");
   }
 };
-
 
 export const validateNewSession = (
   req: Request,

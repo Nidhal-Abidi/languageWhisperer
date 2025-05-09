@@ -2,10 +2,10 @@ import { NextFunction, Request, Response } from "express";
 import path from "path";
 import fs from "node:fs";
 import multer from "multer";
-import { getDirectories } from "./sessionUtils";
+import { getDirectories } from "./sessionUtils.js";
 import axios from "axios";
-import { TTS_SERVICE_URL } from "..";
-import { availableVoices, languageCodes } from "../schema/tts.schema";
+import { availableVoices, languageCodes } from "../schema/tts.schema.js";
+import { TTS_SERVICE_URL } from "../index.js";
 
 export const createNewInteractionsSubFolder = async (sessionId: string) => {
   const interactionsDirPath = path.join(

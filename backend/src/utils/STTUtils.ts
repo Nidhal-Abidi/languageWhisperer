@@ -2,7 +2,7 @@ import axios from "axios";
 import fs from "node:fs";
 import path from "path";
 import FormData from "form-data";
-import { STT_SERVICE_URL } from "..";
+import { STT_SERVICE_URL } from "../index.js";
 
 export const transcribeAudio = async (
   audioFilePath: string

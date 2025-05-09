@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { LLMClient } from "../utils/LLMClient";
+import { LLMClient } from "../utils/LLMClient.js";
 
 const router = Router();
 const llm = new LLMClient();

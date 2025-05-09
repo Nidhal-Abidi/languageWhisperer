@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response, Router } from "express";
 import axios from "axios";
-import { OLLAMA_API_URL } from "..";
-import { generateResponseSchema } from "../schema/llm.schema";
+
+import { generateResponseSchema } from "../schema/llm.schema.js";
+import { OLLAMA_API_URL } from "../index.js";
 
 type Role = "assistant" | "user" | "system";
 

@@ -6,11 +6,11 @@ import {
   loadSessionMeta,
   saveInteractionTranscription,
   generateAudioResponseFromText,
-} from "../utils/interactionsUtils";
+} from "../utils/interactionsUtils.js";
 import multer from "multer";
-import { transcribeAudio } from "../utils/STTUtils";
-import { Session } from "../schema/session.schema";
-import { LLMClient } from "../utils/LLMClient";
+import { transcribeAudio } from "../utils/STTUtils.js";
+import { Session } from "../schema/session.schema.js";
+import { LLMClient } from "../utils/LLMClient.js";
 
 const llm = new LLMClient();
 
@@ -64,12 +64,10 @@ router.post(
   saveInteractionTranscription,
   generateAudioResponseFromText,
   (req, res, next) => {
-    res
-      .status(201)
-      .json({
-        message:
-          "Interaction completed successfully, Waiting for the user to reply!",
-      });
+    res.status(201).json({
+      message:
+        "Interaction completed successfully, Waiting for the user to reply!",
+    });
   }
 );
 

@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { TTS_SERVICE_URL } from "..";
 import axios from "axios";
 import fs from "fs";
 import path from "path";
@@ -7,7 +6,8 @@ import {
   filterVoices,
   validateQuery,
   validateSpeechGenerationBody,
-} from "../utils/TTSUtils";
+} from "../utils/TTSUtils.js";
+import { TTS_SERVICE_URL } from "../index.js";
 
 const router = Router();
 

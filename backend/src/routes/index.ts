@@ -1,8 +1,8 @@
 import { Router } from "express";
-import textToSpeechRouter from "./tts";
-import languagePracticeRouter from "./llm";
-import sessionRouter from "./session";
-import interactionsRouter from "./interactions";
+import textToSpeechRouter from "./tts.js";
+import languagePracticeRouter from "./llm.js";
+import sessionRouter from "./session.js";
+import interactionsRouter from "./interactions.js";
 
 const router = Router();
 
