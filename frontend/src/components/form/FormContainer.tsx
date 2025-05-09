@@ -4,6 +4,8 @@ import { LanguageGrid } from "./LanguageGrid";
 import { LanguageProficiency } from "./LanguageProficiency";
 import { useEffect, useRef, useState } from "react";
 import { useFormErrorScroll } from "./useFormErrorScroll";
+import { BACKEND_URL } from "../../utils/config";
+import { createNewSession } from "../../utils/utilities";
 
 export const FormContainer = () => {
   const {
@@ -26,8 +28,13 @@ export const FormContainer = () => {
 
   const selectedScenario = watch("scenario");
 
-  const afterSubmit = (data) => {
-    console.log("Form submitted successfully:", data);
+  const afterSubmit = async (formData) => {
+    console.log("Form submitted successfully:", formData);
+    console.log("Sending a POST request to -->", BACKEND_URL);
+    const { data } = await createNewSession(formData);
+    console.log(
+      `New session created (sessionDetails=${data}), sending formData to next page (sessions/:sessionId)`
+    );
   };
 
   useEffect(() => {
