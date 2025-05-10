@@ -35,7 +35,7 @@ export const Header = ({
         </h2>
       </div>
       <div className="flex flex-1 justify-end wrap-normal gap-8">
-        <div className="flex items-center rounded-xl p-4 bg-[#f0f2f4] text-[#111418] text-sm font-bold leading-normal tracking-[0.015em] cursor-not-allowed">
+        <div className="flex items-center rounded-xl px-4 py-2 bg-[#f0f2f4] text-[#111418] text-sm font-bold leading-normal tracking-[0.015em] cursor-not-allowed">
           <span
             className={`aspect-square w-10 shrink-0 rounded-lg border border-[#dce0e5] bg-center bg-no-repeat bg-cover ${conversationLanguageFlag}`}
           />
@@ -44,7 +44,7 @@ export const Header = ({
             className={`aspect-square w-10 shrink-0 rounded-lg border border-[#dce0e5] bg-center bg-no-repeat bg-cover ${translationLanguageFlag}`}
           />
         </div>
-        <div className="flex items-center rounded-xl p-4 bg-[#f0f2f4] text-[#111418] text-sm font-bold leading-normal tracking-[0.015em] cursor-not-allowed">
+        <div className="flex items-center rounded-xl px-4 py-2 bg-[#f0f2f4] text-[#111418] text-sm font-bold leading-normal tracking-[0.015em] cursor-not-allowed">
           {proficiencyLevel}
         </div>
       </div>
