@@ -6,8 +6,12 @@ import { getDirectories } from "./sessionUtils.js";
 import axios from "axios";
 import { availableVoices, languageCodes } from "../schema/tts.schema.js";
 import { TTS_SERVICE_URL } from "../index.js";
+import { fileURLToPath } from "node:url";
+import { dirname } from "node:path";
 
 export const createNewInteractionsSubFolder = async (sessionId: string) => {
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
   const interactionsDirPath = path.join(
     __dirname,
     "../../audio/sessions",
@@ -75,6 +79,8 @@ export const validateSessionId = (
   const {
     params: { session_id },
   } = req;
+  const __filename = fileURLToPath(import.meta.url);
+  const __dirname = dirname(__filename);
   const sessionPath = path.join(__dirname, "../../audio/sessions", session_id);
   if (!fs.existsSync(sessionPath)) {
     res.status(404).send(`The requested session ${session_id} doesn't exist`);

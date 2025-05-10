@@ -1,7 +1,8 @@
 import { Router } from "express";
 import axios from "axios";
 import fs from "fs";
-import path from "path";
+import path, { dirname } from "path";
+import { fileURLToPath } from "url";
 import {
   filterVoices,
   validateQuery,
@@ -44,6 +45,8 @@ router.post(
       });
       // Define a file name and path; adjust the directory as needed.
       const outputFileName = `model_${Date.now()}.mp3`;
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = dirname(__filename);
       const outputPath = path.join(__dirname, "../../audio", outputFileName);
 
       // Write the binary data to file

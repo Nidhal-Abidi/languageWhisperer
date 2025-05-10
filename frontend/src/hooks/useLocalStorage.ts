@@ -13,7 +13,7 @@ type Session = {
 export const useLocalStorage = (sessionData: Session) => {
   const [storedValue, setStoredValue] = useState(() => {
     const data = localStorage.getItem("sessionData");
-    return data ? JSON.parse(data) : sessionData;
+    return sessionData ? sessionData : data ? JSON.parse(data) : {};
   });
 
   useEffect(() => {

@@ -27,7 +27,10 @@ export const Session = () => {
         translationLanguage={storedFormData["translation-language"]}
         proficiencyLevel={storedFormData["language-proficiency"]}
       />
-      <ConversationContainer scenario={storedFormData.scenario} />
+      <ConversationContainer
+        scenario={storedFormData.scenario}
+        sessionId={sessionData.session_id}
+      />
     </>
   );
 };
