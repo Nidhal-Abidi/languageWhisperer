@@ -7,6 +7,7 @@ import { OLLAMA_API_URL } from "../index.js";
 type Role = "assistant" | "user" | "system";
 
 export class LLMClient {
+  private modelName = "gemma3:1b";
   // Messages that will be sent to the model as history
   private messagesHistory: Array<{
     role: Role;
@@ -76,7 +77,6 @@ export class LLMClient {
     translationLanguage?: string,
     languageProficiency?: string
   ) => {
-    console.log("***LLM _ MSG --> ", userMessage);
     // For the very first call, set up the conversation with the initial context.
     if (this.messagesHistory.length === 0) {
       // If any of the initial parameters are missing, throw an error.
@@ -91,19 +91,7 @@ export class LLMClient {
         );
       }
       // Build the initial developer message.
-      const initialInstruction = `You are a language learning assistant. ALWAYS respond with valid JSON containing EXACTLY these 3 keys:
-{
-  "userTranslation": "<exact_translation of user_message to ${translationLanguage}>",
-  "assistantOriginal": "<your_response in ${conversationLanguage} using ${languageProficiency} level>",
-  "assistantTranslation": "<exact_translation of your_response to ${translationLanguage}>"
-}
-
-Follow these RULES:
-1. Never add extra fields or comments
-2. Keep values as plain strings (no markdown)
-3. userTranslation must directly translate the user's last message
-4. assistantOriginal/Translation must match exactly
-5. Stay in character for the ${scenario} scenario`;
+      const initialInstruction = `Respond naturally in ${conversationLanguage} at ${languageProficiency} level for scenario: ${scenario}. Don't exceed 3 short sentences in your response! Also: Never use markdown or lists, maximum number of tokens  is 120.`;
 
       // Append the initial developer message.
       this.messagesHistory.push({
@@ -114,36 +102,35 @@ Follow these RULES:
     this.messagesHistory.push({ role: "user", content: userMessage });
 
     const { data } = await axios.post(`${OLLAMA_API_URL}/api/chat`, {
-      model: "phi3",
+      model: this.modelName,
       stream: false,
       messages: this.messagesHistory,
-      format: {
-        type: "object",
-        properties: {
-          userTranslation: {
-            type: "string",
-          },
-          assistantOriginal: {
-            type: "string",
-          },
-          assistantTranslation: {
-            type: "string",
-          },
-        },
-        required: [
-          "userTranslation",
-          "assistantOriginal",
-          "assistantTranslation",
-        ],
-      },
       options: {
         temperature: 0.2,
-        num_predict: 300,
+        num_predict: 120,
+        repeat_penalty: 1.1,
       },
     });
-    // Remove the last user message that lacks the translation
-    this.messagesHistory.pop();
-    const llmResponse = JSON.parse(data.message.content);
+
+    const llmResponse = data.message.content;
+    const [{ data: userTrans }, { data: assistantTrans }] = await Promise.all([
+      // User message translation
+      axios.post(`${OLLAMA_API_URL}/api/generate`, {
+        model: this.modelName,
+        stream: false,
+        prompt: `Translate this "${userMessage}" to ${translationLanguage}. Don't output any extra word except for the translation.`,
+        options: { temperature: 0 },
+      }),
+
+      // Assistant response translation
+      axios.post(`${OLLAMA_API_URL}/api/generate`, {
+        model: this.modelName,
+        stream: false,
+        prompt: `Translate this "${llmResponse}" to ${translationLanguage}. Don't output any extra word except for the translation.`,
+        options: { temperature: 0 },
+      }),
+    ]);
+
     const conversation: {
       userOriginal: string;
       userTranslation: string;
@@ -151,9 +138,9 @@ Follow these RULES:
       assistantTranslation: string;
     } = {
       userOriginal: userMessage,
-      userTranslation: llmResponse.userTranslation,
-      assistantOriginal: llmResponse.assistantOriginal,
-      assistantTranslation: llmResponse.assistantTranslation,
+      userTranslation: userTrans.response,
+      assistantOriginal: llmResponse,
+      assistantTranslation: assistantTrans.response,
     };
     this.updateMessages(conversation);
 

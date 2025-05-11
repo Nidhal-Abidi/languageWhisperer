@@ -19,8 +19,9 @@ services:
         # Wait for Ollama to start
         sleep 5
         
-        # Pull the language model we want to use
-        ollama pull phi3
+        # Pull LLM for chatting and for translation
+        ollama pull gemma3:1b
+        wait
         
         # Keep container running
         tail -f /dev/null
