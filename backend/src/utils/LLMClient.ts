@@ -91,27 +91,19 @@ export class LLMClient {
         );
       }
       // Build the initial developer message.
-      const initialInstruction = `You are an AI language practice partner helping users learn ${conversationLanguage}. Your job is to have natural conversations and provide translations.
-
-PARAMETERS:
-- Scenario: ${scenario}
-- User's proficiency: ${languageProficiency} level in ${conversationLanguage}
-- Always respond in ${conversationLanguage} first, then provide a ${translationLanguage} translation
-
-OUTPUT FORMAT:
-Provide a valid JSON object with these exact keys:
+      const initialInstruction = `You are a language learning assistant. ALWAYS respond with valid JSON containing EXACTLY these 3 keys:
 {
-  "userTranslation": "", // Your accurate translation of user's message to ${translationLanguage}
-  "assistantOriginal": "", // Your response in ${conversationLanguage} (keep appropriate to ${languageProficiency} level)
-  "assistantTranslation": "" // Your exact translation of your response to ${translationLanguage}
+  "userTranslation": "<exact_translation of user_message to ${translationLanguage}>",
+  "assistantOriginal": "<your_response in ${conversationLanguage} using ${languageProficiency} level>",
+  "assistantTranslation": "<exact_translation of your_response to ${translationLanguage}>"
 }
 
-GUIDELINES:
-- Keep responses concise (2-4 sentences) to fit in limited context window
-- Match language complexity to user's ${languageProficiency} level
-- Focus on accuracy of translations rather than creative elaboration
-- Stay in character for the ${scenario} scenario
-- Always respond to the specific content of the user's message`;
+Follow these RULES:
+1. Never add extra fields or comments
+2. Keep values as plain strings (no markdown)
+3. userTranslation must directly translate the user's last message
+4. assistantOriginal/Translation must match exactly
+5. Stay in character for the ${scenario} scenario`;
 
       // Append the initial developer message.
       this.messagesHistory.push({
@@ -122,15 +114,12 @@ GUIDELINES:
     this.messagesHistory.push({ role: "user", content: userMessage });
 
     const { data } = await axios.post(`${OLLAMA_API_URL}/api/chat`, {
-      model: "phi3:mini",
+      model: "phi3",
       stream: false,
       messages: this.messagesHistory,
       format: {
         type: "object",
         properties: {
-          userOriginal: {
-            type: "string",
-          },
           userTranslation: {
             type: "string",
           },
@@ -142,14 +131,14 @@ GUIDELINES:
           },
         },
         required: [
-          "userOriginal",
           "userTranslation",
           "assistantOriginal",
           "assistantTranslation",
         ],
       },
       options: {
-        temperature: 0,
+        temperature: 0.2,
+        num_predict: 300,
       },
     });
     // Remove the last user message that lacks the translation
