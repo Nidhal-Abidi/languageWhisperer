@@ -24,8 +24,7 @@ const upload = multer({
   },
 });
 
-// 3. generate audio using TTS
-// 4. Return last interactions folder path (eg. `backend/audio/sessions/:session_id/interactions/003`)
+// Return last interactions folder path (eg. `backend/audio/sessions/:session_id/interactions/003`)
 /* 
 All the files inside of the interactions folder will have the same files after this request:
     user.webm
@@ -42,13 +41,17 @@ router.post(
     if (!req.file) {
       res.status(400).json({ error: "Missing 'userRecording' file" });
     }
+    res.locals.userAudioFileTime = Date.now() - res.locals.userAudioFileStart;
     // Use STT model to transcribe the model
     const audioRecordingPath = req.file!.destination + "/user.webm";
+    const sttStart = Date.now();
     let transcription = await transcribeAudio(audioRecordingPath);
+    res.locals.STTTime = Date.now() - sttStart;
     transcription = transcription.replace(/(\r\n|\n|\r)/gm, "");
 
     // Get the scenario, conversation/translation languages and language proficiency from `meta.json`
     const metaData: Session = res.locals.sessionMetaData;
+    const llmStart = Date.now();
     // Get the response from the LLM
     const llmResponse = await llm.generateResponse(
       transcription,
@@ -57,6 +60,7 @@ router.post(
       metaData.translationLanguage,
       metaData.languageProficiency
     );
+    res.locals.llmTime = Date.now() - llmStart;
     res.locals.llmResponse = llmResponse;
     res.locals.interactionsDirPath = req.file!.destination;
     next();
@@ -67,6 +71,15 @@ router.post(
     res.status(201).json({
       message:
         "Interaction completed successfully, Waiting for the user to reply!",
+      processingTimes: {
+        STTduration: res.locals.STTTime,
+        LLMduration: res.locals.llmTime,
+        TTSduration: res.locals.TTSTime,
+        saveUserJsonFileDuration: res.locals.userJsonFileTime,
+        saveAssistantJsonFileDuration: res.locals.assistantJsonFileTime,
+        saveUserAudioFileDuration: res.locals.userAudioFileTime,
+        saveAssistantAudioFileDuration: res.locals.assistantAudioFileTime,
+      },
     });
   }
 );

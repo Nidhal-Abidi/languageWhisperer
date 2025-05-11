@@ -99,6 +99,7 @@ export const loadSessionMeta = (
   res.locals.sessionMetaData = JSON.parse(
     fs.readFileSync(metaDataFilePath, "utf-8")
   );
+  res.locals.userAudioFileStart = Date.now();
   next();
 };
 
@@ -123,16 +124,20 @@ export const saveInteractionTranscription = (
   // Save the interaction into user.json & assistant.json
   const userFilePath = req.file!.destination + "/user.json";
   const assistantFilePath = req.file!.destination + "/assistant.json";
+  const userJsonFileStart = Date.now();
   saveTranslationToJson(
     llmResponse.userOriginal,
     llmResponse.userTranslation,
     userFilePath
   );
+  res.locals.userJsonFileTime = Date.now() - userJsonFileStart;
+  const assistantJsonFileStart = Date.now();
   saveTranslationToJson(
     llmResponse.assistantOriginal,
     llmResponse.assistantTranslation,
     assistantFilePath
   );
+  res.locals.assistantJsonFileTime = Date.now() - assistantJsonFileStart;
   next();
 };
 
@@ -145,6 +150,7 @@ export const generateAudioResponseFromText = async (
     const chosenAudioVoice = getAudioVoice(
       res.locals.sessionMetaData.conversationLanguage
     );
+    const ttsStart = Date.now();
     const { data } = await axios({
       method: "post",
       url: `${TTS_SERVICE_URL}/v1/audio/speech`,
@@ -154,15 +160,17 @@ export const generateAudioResponseFromText = async (
       },
       responseType: "arraybuffer",
     });
+    res.locals.TTSTime = Date.now() - ttsStart;
     // Define a file name and path; adjust the directory as needed.
     const outputFileName = "assistant.mp3";
     const outputPath = path.join(
       res.locals.interactionsDirPath,
       outputFileName
     );
-
+    const assistantAudioFileStart = Date.now();
     // Write the binary data to file
     fs.writeFileSync(outputPath, data);
+    res.locals.assistantAudioFileTime = Date.now() - assistantAudioFileStart;
     console.log("Audio file saved at:", outputPath);
     next();
   } catch (error) {
