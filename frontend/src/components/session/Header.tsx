@@ -14,7 +14,7 @@ export const Header = ({
   const translationLanguageFlag = getFlag(translationLanguage);
 
   return (
-    <header className="sticky top-0 flex items-center justify-between  border-b border-solid border-b-[#f0f2f4] bg-white px-10 py-3">
+    <header className="fixed inset-x-0 top-0 z-50 flex items-center justify-between  border-b border-solid border-b-[#f0f2f4] bg-white px-10 py-3">
       <div className="flex items-center gap-4 text-[#111418]">
         <div className="size-4">
           <svg
