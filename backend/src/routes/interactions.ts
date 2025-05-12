@@ -6,6 +6,7 @@ import {
   loadSessionMeta,
   saveInteractionTranscription,
   generateAudioResponseFromText,
+  getLatestInteractionSubFolder,
 } from "../utils/interactionsUtils.js";
 import multer from "multer";
 import { transcribeAudio } from "../utils/STTUtils.js";
@@ -69,8 +70,7 @@ router.post(
   generateAudioResponseFromText,
   (req, res, next) => {
     res.status(201).json({
-      message:
-        "Interaction completed successfully, Waiting for the user to reply!",
+      message: "Interaction completed successfully!",
       processingTimes: {
         STTduration: res.locals.STTTime,
         LLMduration: res.locals.llmTime,
@@ -79,6 +79,12 @@ router.post(
         saveAssistantJsonFileDuration: res.locals.assistantJsonFileTime,
         saveUserAudioFileDuration: res.locals.userAudioFileTime,
         saveAssistantAudioFileDuration: res.locals.assistantAudioFileTime,
+      },
+      currentInteraction: {
+        ...res.locals.llmResponse,
+        audioFolderName: getLatestInteractionSubFolder(
+          res.locals.interactionsDirPath
+        ),
       },
     });
   }

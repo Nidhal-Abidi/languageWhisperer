@@ -72,6 +72,14 @@ export type Languages =
 
 export type LanguageProficiency = "A1" | "A2" | "B1" | "B2" | "C1" | "C2";
 
+export type Interaction = {
+  userOriginal?: string;
+  userTranslation?: string;
+  assistantOriginal?: string;
+  assistantTranslation?: string;
+  audioFolderName?: string;
+};
+
 export const languages = [
   { code: "japanese", text: "Japanese", flag: "fi-jp" },
   { code: "spanish", text: "Spanish", flag: "fi-es" },

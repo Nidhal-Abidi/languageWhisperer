@@ -21,25 +21,21 @@ export const createNewInteractionsSubFolder = async (sessionId: string) => {
   await fs.promises.mkdir(interactionsDirPath, { recursive: true });
 
   const existingInteractions = await getDirectories(interactionsDirPath);
-
-  let interactionsSubFolder = "";
-  if (existingInteractions.length === 0) {
-    // We have to create the first interactions subfolder called `1`
-    interactionsSubFolder = path.join(interactionsDirPath, "1");
-  } else {
-    // We have to create the next interactions subfolder.
-    const nextInteractionNumber =
-      Number(existingInteractions[existingInteractions.length - 1]) + 1;
-
-    interactionsSubFolder = path.join(
-      interactionsDirPath,
-      nextInteractionNumber.toString()
-    );
-  }
+  const nums = existingInteractions.map((s) => Number(s));
+  const maxExisting = nums.length > 0 ? Math.max(...nums) : 0;
+  const nextInteractionNumber = maxExisting + 1;
+  const interactionsSubFolder = path.join(
+    interactionsDirPath,
+    nextInteractionNumber.toString()
+  );
 
   await fs.promises.mkdir(interactionsSubFolder, { recursive: true });
-
   return interactionsSubFolder;
+};
+
+export const getLatestInteractionSubFolder = (interactionsDirPath: string) => {
+  const foldersArr = interactionsDirPath.split("/");
+  return foldersArr[foldersArr.length - 1];
 };
 
 export const storage = multer.diskStorage({

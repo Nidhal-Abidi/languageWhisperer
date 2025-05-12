@@ -5,6 +5,7 @@ import { RestartConversation } from "./RestartConversation";
 import { VoiceInputButton } from "./VoiceInputButton";
 import { BACKEND_URL } from "../../utils/config";
 import ProcessingTimesVisualizer from "./ProcessingTimesVisualizer";
+import axios from "axios";
 
 type interactionData = {
   message: string;
@@ -43,15 +44,11 @@ export const ConversationContainer = ({
       const formData = new FormData();
       formData.append("userRecording", audioBlob, "recording.webm");
 
-      const response = await fetch(
+      const { data } = await axios.post(
         `${BACKEND_URL}/api/sessions/${sessionId}/interactions`,
-        {
-          method: "POST",
-          body: formData,
-        }
+        formData
       );
 
-      const data = await response.json();
       console.log("Request Successful! Data received from backend -->>", data);
       setInteractionData(data);
     } catch (e) {
@@ -70,7 +67,7 @@ export const ConversationContainer = ({
           onRecordingComplete={handleRecordingComplete}
         />
         <ProcessingTimesVisualizer {...interactionData?.processingTimes} />
-        <ConversationHistory />
+        <ConversationHistory {...interactionData?.currentInteraction} />
         <RestartConversation />
       </div>
     </div>

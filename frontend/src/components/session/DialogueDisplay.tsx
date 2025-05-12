@@ -1,50 +1,59 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ChatMessage } from "./message/ChatMessage";
+import { Interaction } from "../../utils/constants";
 
 export type Message = {
   sender: "user" | "bot";
   text: string;
   translation: string;
-  audioUrl: "#";
+  audioUrl: string;
 };
 
-export const DialogueDisplay = () => {
-  const messages: Message[] = [
-    {
-      sender: "user",
-      text: "Salut! Comment vas-tu aujourd'hui?",
-      translation: "Hello! How are you today?",
-      audioUrl: "#",
-    },
-    {
-      sender: "bot",
-      text: "Je vais très bien, merci! Et toi, comment ça va? As-tu fait quelque chose d'intéressant aujourd'hui?",
-      translation:
-        "I'm doing very well, thank you! And you, how are you? Have you done anything interesting today?",
-      audioUrl: "#",
-    },
-    {
-      sender: "bot",
-      text: "Je vais très bien, merci! Et toi, comment ça va? As-tu fait quelque chose d'intéressant aujourd'hui?",
-      translation:
-        "I'm doing very well, thank you! And you, how are you? Have you done anything interesting today?",
-      audioUrl: "#",
-    },
-    {
-      sender: "bot",
-      text: "Je vais très bien, merci! Et toi, comment ça va? As-tu fait quelque chose d'intéressant aujourd'hui?",
-      translation:
-        "I'm doing very well, thank you! And you, how are you? Have you done anything interesting today?",
-      audioUrl: "#",
-    },
-    {
-      sender: "user",
-      text: "Oui, j'ai visité le musée avec mes amis ce matin. C'était vraiment fascinant!",
-      translation:
-        "Yes, I visited the museum with my friends this morning. It was really fascinating!",
-      audioUrl: "#",
-    },
-  ];
+export const DialogueDisplay = ({
+  userOriginal,
+  userTranslation,
+  assistantOriginal,
+  assistantTranslation,
+  audioFolderName,
+}: Interaction) => {
+  const [messages, setMessages] = useState<Message[]>([]);
+
+  useEffect(() => {
+    if (
+      !userOriginal ||
+      !userTranslation ||
+      !assistantOriginal ||
+      !assistantTranslation ||
+      !audioFolderName
+    ) {
+      return;
+    }
+
+    setMessages((currentMessages) => {
+      return [
+        ...currentMessages,
+        {
+          sender: "user",
+          text: userOriginal,
+          translation: userTranslation,
+          audioUrl: audioFolderName,
+        },
+        {
+          sender: "bot",
+          text: assistantOriginal,
+          translation: assistantTranslation,
+          audioUrl: audioFolderName,
+        },
+      ];
+    });
+  }, [
+    userOriginal,
+    userTranslation,
+    assistantOriginal,
+    assistantTranslation,
+    audioFolderName,
+  ]);
+
   // Track which messages have expanded translations
   const [expandedTranslations, setExpandedTranslations] = useState<
     Record<number, boolean>
@@ -71,18 +80,25 @@ export const DialogueDisplay = () => {
   };
 
   return (
-    <div className="overflow-y-scroll p-2 max-h-72 flex flex-col w-full mx-auto bg-gray-50 rounded-lg overflow-hidden">
-      {messages.map((message, index) => (
-        <ChatMessage
-          key={index}
-          message={message}
-          index={index}
-          isPlayingAudio={playingAudio === index}
-          isTranslationExpanded={expandedTranslations[index]}
-          onToggleAudio={toggleAudio}
-          onToggleTranslation={toggleTranslation}
-        />
-      ))}
+    <div className="overflow-y-scroll p-2 max-h-96 flex flex-col w-full mx-auto bg-gray-50 rounded-lg overflow-hidden">
+      {messages.length === 0 ? (
+        <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
+          <p>No messages yet.</p>
+          <p className="text-xs mt-1">Start speaking to begin the dialogue.</p>
+        </div>
+      ) : (
+        messages.map((message, index) => (
+          <ChatMessage
+            key={index}
+            message={message}
+            index={index}
+            isPlayingAudio={playingAudio === index}
+            isTranslationExpanded={expandedTranslations[index]}
+            onToggleAudio={toggleAudio}
+            onToggleTranslation={toggleTranslation}
+          />
+        ))
+      )}
     </div>
   );
 };
