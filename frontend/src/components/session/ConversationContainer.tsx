@@ -4,6 +4,27 @@ import { ConversationInstructions } from "./ConversationInstructions";
 import { RestartConversation } from "./RestartConversation";
 import { VoiceInputButton } from "./VoiceInputButton";
 import { BACKEND_URL } from "../../utils/config";
+import ProcessingTimesVisualizer from "./ProcessingTimesVisualizer";
+
+type interactionData = {
+  message: string;
+  processingTimes: {
+    STTduration: number;
+    LLMduration: number;
+    TTSduration: number;
+    saveUserJsonFileDuration: number;
+    saveAssistantJsonFileDuration: number;
+    saveUserAudioFileDuration: number;
+    saveAssistantAudioFileDuration: number;
+  };
+  currentInteraction: {
+    userOriginal: string;
+    userTranslation: string;
+    assistantOriginal: string;
+    assistantTranslation: string;
+    audioFolderName: string;
+  };
+};
 
 export const ConversationContainer = ({
   scenario,
@@ -12,7 +33,8 @@ export const ConversationContainer = ({
   scenario: string;
   sessionId: string;
 }) => {
-  const [interactionData, setInteractionData] = useState(null);
+  const [interactionData, setInteractionData] =
+    useState<interactionData | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleRecordingComplete = async (audioBlob: Blob) => {
@@ -47,6 +69,7 @@ export const ConversationContainer = ({
           isProcessing={isProcessing}
           onRecordingComplete={handleRecordingComplete}
         />
+        <ProcessingTimesVisualizer {...interactionData?.processingTimes} />
         <ConversationHistory />
         <RestartConversation />
       </div>
