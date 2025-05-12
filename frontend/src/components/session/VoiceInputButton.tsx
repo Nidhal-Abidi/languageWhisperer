@@ -106,7 +106,7 @@ export const VoiceInputButton = ({
       <div className="mt-3 text-center">
         {isProcessing && (
           <div className="text-blue-600 font-medium">
-            Processing your response (It may take a while)...
+            Processing your response (It usually requires around 1 minute)...
           </div>
         )}
         {isRecording && (
