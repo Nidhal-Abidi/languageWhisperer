@@ -70,38 +70,36 @@ export const VoiceInputButton = ({
   return (
     <div className="flex flex-col items-center justify-center">
       {/* Recording Button */}
-      <div className="relative">
-        <div
-          className={`flex items-center justify-center w-20 h-20 rounded-full bg-white shadow-xl ring ring-gray-100 transition duration-500 ${
-            isProcessing ? "cursor-not-allowed opacity-50" : "cursor-pointer"
-          }`}
-          style={
-            isRecording
-              ? {
-                  backgroundColor: "#1980e6",
-                  animation: "bounce-custom 1.5s ease-in-out infinite 0.25s",
-                }
-              : {}
-          }
-          onClick={isProcessing ? undefined : handleClick}
-        >
-          {isProcessing ? (
-            <FontAwesomeIcon
-              icon={faSpinner}
-              className="text-[23px] text-blue-600 animate-spin"
-            />
-          ) : isRecording ? (
-            <FontAwesomeIcon
-              icon={faStop}
-              className="text-[23px] text-gray-100"
-            />
-          ) : (
-            <FontAwesomeIcon
-              icon={faMicrophone}
-              className="text-[23px] text-blue-600"
-            />
-          )}
-        </div>
+      <div
+        className={`flex items-center justify-center w-20 h-20 rounded-full bg-white shadow-xl ring ring-gray-100 transition duration-500 ${
+          isProcessing ? "cursor-not-allowed opacity-50" : "cursor-pointer"
+        }`}
+        style={
+          isRecording
+            ? {
+                backgroundColor: "#1980e6",
+                animation: "bounce-custom 1.5s ease-in-out infinite 0.25s",
+              }
+            : {}
+        }
+        onClick={isProcessing ? undefined : handleClick}
+      >
+        {isProcessing ? (
+          <FontAwesomeIcon
+            icon={faSpinner}
+            className="text-[23px] text-blue-600 animate-spin"
+          />
+        ) : isRecording ? (
+          <FontAwesomeIcon
+            icon={faStop}
+            className="text-[23px] text-gray-100"
+          />
+        ) : (
+          <FontAwesomeIcon
+            icon={faMicrophone}
+            className="text-[23px] text-blue-600"
+          />
+        )}
       </div>
 
       {/* Status Indicators */}
