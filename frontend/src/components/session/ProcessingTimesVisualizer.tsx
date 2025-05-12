@@ -38,6 +38,12 @@ const ProcessingTimesVisualizer = ({
     return "bg-red-500 scale-125";
   };
 
+  const formatDuration = (duration?: number) => {
+    if (duration === undefined) return "N/A";
+    const seconds = duration / 1000;
+    return `${seconds.toFixed(2)} s`;
+  };
+
   // Icons mapping for different processing stages
   const processIcons = [
     {
@@ -107,7 +113,7 @@ const ProcessingTimesVisualizer = ({
               <div className="text-center">
                 <p className="text-sm font-semibold text-gray-700">{label}</p>
                 <p className="text-xs text-gray-500">
-                  {duration !== undefined ? `${duration} ms` : "N/A"}
+                  {formatDuration(duration)}
                 </p>
               </div>
             </div>
