@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { useFormErrorScroll } from "./useFormErrorScroll";
 import { createNewSession } from "../../utils/utilities";
 import { getScenarioDescription } from "../../utils/constants";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
 
 export const FormContainer = () => {
   const {
@@ -25,6 +26,7 @@ export const FormContainer = () => {
     scenario: useRef<HTMLDivElement>(null),
   };
   const navigate = useNavigate();
+  const { storeSession } = useLocalStorage();
 
   useFormErrorScroll(errors, refs);
 
@@ -43,12 +45,16 @@ export const FormContainer = () => {
     const response = await createNewSession(formData);
     console.log("response -->", response);
 
-    navigate(`/sessions/${response.session_id}`, {
-      state: {
-        formData: formData,
-        sessionData: response,
-      },
+    storeSession({
+      "conversation-language": formData["conversation-language"],
+      "translation-language": formData["translation-language"],
+      "language-proficiency": formData["language-proficiency"],
+      scenario: formData.scenario,
+      metaPath: response.meta_path,
+      sessionId: response.session_id,
     });
+
+    navigate(`/sessions/${response.session_id}`);
   };
 
   useEffect(() => {

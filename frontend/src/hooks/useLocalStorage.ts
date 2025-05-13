@@ -10,15 +10,35 @@ type Session = {
   sessionId: string;
 };
 
-export const useLocalStorage = (sessionData: Session) => {
-  const [storedValue, setStoredValue] = useState(() => {
+export const useLocalStorage = (initialSessionData?: Session) => {
+  const [sessionData, setSessionData] = useState(() => {
     const data = localStorage.getItem("sessionData");
-    return sessionData ? sessionData : data ? JSON.parse(data) : {};
+    return initialSessionData
+      ? initialSessionData
+      : data
+      ? JSON.parse(data)
+      : undefined;
   });
 
   useEffect(() => {
-    localStorage.setItem("sessionData", JSON.stringify(storedValue));
-  }, [storedValue]);
+    if (sessionData == undefined) {
+      localStorage.removeItem("sessionData");
+    } else {
+      localStorage.setItem("sessionData", JSON.stringify(sessionData));
+    }
+  }, [sessionData]);
 
-  return [storedValue, setStoredValue];
+  const storeSession = (newSessionData: Session) => {
+    setSessionData(newSessionData);
+  };
+
+  const clearSession = () => {
+    setSessionData(undefined);
+  };
+
+  return {
+    sessionData,
+    storeSession,
+    clearSession,
+  };
 };

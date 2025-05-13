@@ -1,35 +1,39 @@
-import { useLocation } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { ConversationContainer } from "./ConversationContainer";
 import { Header } from "./Header";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { useEffect } from "react";
 
 export const Session = () => {
-  const location = useLocation();
-  const {
-    state: { formData, sessionData },
-  } = location;
-  const conversationMetaData = {
-    "conversation-language": formData["conversation-language"],
-    "translation-language": formData["translation-language"],
-    "language-proficiency": formData["language-proficiency"],
-    scenario: formData.scenario,
-    metaPath: sessionData.meta_path,
-    sessionId: sessionData.session_id,
-  };
-  const [storedFormData, setStoredFormData] =
-    useLocalStorage(conversationMetaData);
+  const navigate = useNavigate();
+  const { sessionId } = useParams();
+  const { sessionData } = useLocalStorage();
 
-  console.log("storedFormData -->", storedFormData);
+  useEffect(() => {
+    if (sessionData) {
+      // Validate that the URL's sessionId matches the stored sessionId
+      if (sessionId && sessionId !== sessionData.sessionId) {
+        console.log("Session ID mismatch - redirecting to form");
+        navigate("/", { replace: true });
+      }
+    }
+  }, [sessionData, navigate, sessionId]);
+
+  if (!sessionData) {
+    return <div>Loading session...</div>;
+  }
+
+  console.log("storedFormData -->", sessionData);
   return (
     <>
       <Header
-        conversationLanguage={storedFormData["conversation-language"]}
-        translationLanguage={storedFormData["translation-language"]}
-        proficiencyLevel={storedFormData["language-proficiency"]}
+        conversationLanguage={sessionData["conversation-language"]}
+        translationLanguage={sessionData["translation-language"]}
+        proficiencyLevel={sessionData["language-proficiency"]}
       />
       <ConversationContainer
-        scenario={storedFormData.scenario}
-        sessionId={sessionData.session_id}
+        scenario={sessionData.scenario}
+        sessionId={sessionData.sessionId}
       />
     </>
   );
