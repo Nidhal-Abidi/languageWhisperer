@@ -6,7 +6,7 @@ const llm = new LLMClient();
 
 router.post("/api/reset-conversation", (req, res) => {
   llm.resetTheConversation();
-  res.send();
+  res.send("Conversation is reset");
 });
 
 router.post(
