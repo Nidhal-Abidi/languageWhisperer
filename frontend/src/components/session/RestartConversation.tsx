@@ -15,7 +15,7 @@ export const RestartConversation = () => {
       );
       console.log(data);
       // Remove the session Data stored locally.
-      clearSession(); // Clear the session data from localStorage
+      clearSession();
       // Move to the form page.
       navigate("/", { replace: true });
     } catch (error) {
