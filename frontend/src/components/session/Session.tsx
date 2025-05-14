@@ -3,6 +3,7 @@ import { ConversationContainer } from "./ConversationContainer";
 import { Header } from "./Header";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { useEffect } from "react";
+import { useScrollToPageTop } from "../../hooks/useScrollToPageTop";
 
 export const Session = () => {
   const navigate = useNavigate();
@@ -18,6 +19,8 @@ export const Session = () => {
       }
     }
   }, [sessionData, navigate, sessionId]);
+
+  useScrollToPageTop();
 
   if (!sessionData) {
     return <div>Loading session...</div>;
