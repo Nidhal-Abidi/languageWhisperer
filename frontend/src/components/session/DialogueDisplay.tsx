@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { ChatMessage } from "./message/ChatMessage";
 import { Interaction } from "../../utils/constants";
+import { useConversationStorage } from "../../hooks/useConversationStorage";
 
 export type Message = {
   sender: "user" | "bot";
@@ -16,7 +17,7 @@ export const DialogueDisplay = ({
   assistantTranslation,
   audioFolderName,
 }: Interaction) => {
-  const [messages, setMessages] = useState<Message[]>([]);
+  const { messages, addMessagePair } = useConversationStorage();
 
   useEffect(() => {
     if (
@@ -29,29 +30,20 @@ export const DialogueDisplay = ({
       return;
     }
 
-    setMessages((currentMessages) => {
-      return [
-        ...currentMessages,
-        {
-          sender: "user",
-          text: userOriginal,
-          translation: userTranslation,
-          audioUrl: audioFolderName,
-        },
-        {
-          sender: "bot",
-          text: assistantOriginal,
-          translation: assistantTranslation,
-          audioUrl: audioFolderName,
-        },
-      ];
-    });
+    addMessagePair(
+      userOriginal,
+      userTranslation,
+      assistantOriginal,
+      assistantTranslation,
+      audioFolderName
+    );
   }, [
     userOriginal,
     userTranslation,
     assistantOriginal,
     assistantTranslation,
     audioFolderName,
+    addMessagePair,
   ]);
 
   // Track which messages have expanded translations

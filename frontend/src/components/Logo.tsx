@@ -2,10 +2,12 @@ import { useNavigate } from "react-router";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import axios from "axios";
 import { BACKEND_URL } from "../utils/config";
+import { useConversationStorage } from "../hooks/useConversationStorage";
 
 export const Logo = () => {
   const navigate = useNavigate();
   const { clearSession } = useLocalStorage();
+  const { clearMessages } = useConversationStorage();
 
   const startNewConversation = async () => {
     // Reset the conversation on the backend to remove all the stored messages.
@@ -16,6 +18,7 @@ export const Logo = () => {
       console.log(data);
       // Remove the session Data stored locally.
       clearSession();
+      clearMessages();
       // Move to the form page.
       navigate("/", { replace: true });
     } catch (error) {
