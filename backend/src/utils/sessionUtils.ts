@@ -24,7 +24,6 @@ export const saveSessionData = (session_id: string, data: Session) => {
     const metaPath = path.join(sessionsDirPath, "meta.json");
 
     fs.writeFileSync(metaPath, JSON.stringify(data, null, 2));
-    console.log("Session Data has been saved!");
   } catch (error) {
     console.error("Error saving session data:", error);
     throw new Error("Failed to create session directory");

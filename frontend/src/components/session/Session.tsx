@@ -26,7 +26,6 @@ export const Session = () => {
     return <div>Loading session...</div>;
   }
 
-  console.log("storedFormData -->", sessionData);
   return (
     <>
       <Header

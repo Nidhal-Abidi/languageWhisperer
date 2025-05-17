@@ -12,10 +12,7 @@ export const Logo = () => {
   const startNewConversation = async () => {
     // Reset the conversation on the backend to remove all the stored messages.
     try {
-      const { data } = await axios.post(
-        `${BACKEND_URL}/api/reset-conversation`
-      );
-      console.log(data);
+      await axios.post(`${BACKEND_URL}/api/reset-conversation`);
       // Remove the session Data stored locally.
       clearSession();
       clearMessages();

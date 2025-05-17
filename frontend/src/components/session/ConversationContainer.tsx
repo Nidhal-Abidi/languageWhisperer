@@ -50,7 +50,6 @@ export const ConversationContainer = ({
         formData
       );
 
-      console.log("Request Successful! Data received from backend -->>", data);
       setInteractionData(data);
     } catch (e) {
       console.error("Error: ", e);

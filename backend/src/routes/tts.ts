@@ -51,7 +51,6 @@ router.post(
 
       // Write the binary data to file
       fs.writeFileSync(outputPath, data);
-      console.log("Audio file saved at:", outputPath);
       res.send({
         message: "Voice created and file saved",
         file: outputFileName,

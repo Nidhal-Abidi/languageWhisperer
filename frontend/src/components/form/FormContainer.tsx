@@ -40,10 +40,8 @@ export const FormContainer = () => {
           ? formData.customScenario
           : getScenarioDescription(formData.scenario),
     };
-    console.log("Form submitted successfully:", formData);
     // response type --> {message: string; meta_path:string; session_id: string;}
     const response = await createNewSession(formData);
-    console.log("response -->", response);
 
     storeSession({
       "conversation-language": formData["conversation-language"],
