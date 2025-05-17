@@ -6,7 +6,6 @@ import {
   loadSessionMeta,
   saveInteractionTranscription,
   generateAudioResponseFromText,
-  getLatestInteractionSubFolder,
 } from "../utils/interactionsUtils.js";
 import multer from "multer";
 import { transcribeAudio } from "../utils/STTUtils.js";
@@ -82,9 +81,12 @@ router.post(
       },
       currentInteraction: {
         ...res.locals.llmResponse,
-        audioFolderName: getLatestInteractionSubFolder(
-          res.locals.interactionsDirPath
-        ),
+        userAudioUrl:
+          res.locals.interactionsDirPath.replace("/app/audio", "") +
+          "/user.webm",
+        assistantAudioUrl:
+          res.locals.interactionsDirPath.replace("/app/audio", "") +
+          "/assistant.mp3",
       },
     });
   }

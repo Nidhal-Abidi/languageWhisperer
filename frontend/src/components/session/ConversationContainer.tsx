@@ -23,7 +23,8 @@ type interactionData = {
     userTranslation: string;
     assistantOriginal: string;
     assistantTranslation: string;
-    audioFolderName: string;
+    userAudioUrl: string;
+    assistantAudioUrl: string;
   };
 };
 

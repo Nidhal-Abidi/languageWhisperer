@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { Message } from "../components/session/DialogueDisplay";
+import { BACKEND_URL } from "../utils/config";
 
 export const useConversationStorage = (initialData?: Message[]) => {
   const [messages, setMessages] = useState<Message[]>(() => {
@@ -17,20 +18,21 @@ export const useConversationStorage = (initialData?: Message[]) => {
       userTranslation: string,
       assistantOriginal: string,
       assistantTranslation: string,
-      audioFolderName: string
+      userAudioUrl: string,
+      assistantAudioUrl: string
     ) => {
       const newMessages: Message[] = [
         {
           sender: "user",
           text: userOriginal,
           translation: userTranslation,
-          audioUrl: audioFolderName,
+          audioUrl: `${BACKEND_URL}${userAudioUrl}`,
         },
         {
           sender: "bot",
           text: assistantOriginal,
           translation: assistantTranslation,
-          audioUrl: audioFolderName,
+          audioUrl: `${BACKEND_URL}${assistantAudioUrl}`,
         },
       ];
 

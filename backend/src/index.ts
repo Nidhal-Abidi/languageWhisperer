@@ -2,6 +2,11 @@ import express from "express";
 import router from "./routes/index.js";
 import cors from "cors";
 import { env } from "./config/env.js";
+import path, { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const sessionsDir = path.join(__dirname, "..", "audio", "sessions");
 
 const app = express();
 const PORT = env.PORT;
@@ -17,6 +22,10 @@ app.use(
   })
 );
 app.use(express.json());
+app.use(
+  "/sessions",
+  express.static(sessionsDir, { acceptRanges: true, maxAge: "1h" })
+);
 app.use(router);
 
 app.listen(PORT, () => {

@@ -83,6 +83,7 @@ services:
       - "3000:3000"
     volumes:
       - ./backend:/app
+      - ./backend/audio/sessions:/app/audio/sessions
       - /app/node_modules
     command: npm run dev
     environment:

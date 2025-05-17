@@ -15,7 +15,8 @@ export const DialogueDisplay = ({
   userTranslation,
   assistantOriginal,
   assistantTranslation,
-  audioFolderName,
+  userAudioUrl,
+  assistantAudioUrl,
 }: Interaction) => {
   const { messages, addMessagePair } = useConversationStorage();
 
@@ -25,7 +26,8 @@ export const DialogueDisplay = ({
       !userTranslation ||
       !assistantOriginal ||
       !assistantTranslation ||
-      !audioFolderName
+      !userAudioUrl ||
+      !assistantAudioUrl
     ) {
       return;
     }
@@ -35,14 +37,16 @@ export const DialogueDisplay = ({
       userTranslation,
       assistantOriginal,
       assistantTranslation,
-      audioFolderName
+      userAudioUrl,
+      assistantAudioUrl
     );
   }, [
     userOriginal,
     userTranslation,
     assistantOriginal,
     assistantTranslation,
-    audioFolderName,
+    userAudioUrl,
+    assistantAudioUrl,
     addMessagePair,
   ]);
 
@@ -59,18 +63,6 @@ export const DialogueDisplay = ({
     }));
   };
 
-  // Audio playback state
-  const [playingAudio, setPlayingAudio] = useState<number | null>(null);
-
-  // Simulate audio playback
-  const toggleAudio = (index: number) => {
-    if (playingAudio === index) {
-      setPlayingAudio(null);
-    } else {
-      setPlayingAudio(index);
-    }
-  };
-
   return (
     <div className="overflow-y-scroll p-2 max-h-96 flex flex-col w-full mx-auto bg-gray-50 rounded-lg overflow-hidden">
       {messages.length === 0 ? (
@@ -84,9 +76,7 @@ export const DialogueDisplay = ({
             key={index}
             message={message}
             index={index}
-            isPlayingAudio={playingAudio === index}
             isTranslationExpanded={expandedTranslations[index]}
-            onToggleAudio={toggleAudio}
             onToggleTranslation={toggleTranslation}
           />
         ))
