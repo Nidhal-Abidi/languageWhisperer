@@ -22,8 +22,8 @@ export const validateQuery = (
 
 export const filterVoices = (
   voices: Array<string>,
-  language: Languages,
-  gender: "male" | "female"
+  language?: Languages,
+  gender?: "male" | "female"
 ) => {
   let filteredVoices = [...voices];
 
