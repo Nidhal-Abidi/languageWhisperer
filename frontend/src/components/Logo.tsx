@@ -23,7 +23,7 @@ export const Logo = () => {
     }
   };
   return (
-    <div className="inline-block hover:text-[#5583B4] transition-colors">
+    <div className="inline-block text-[#275559] hover:text-[#a1c997] transition-colors">
       <svg
         className="cursor-pointer color-current"
         onClick={startNewConversation}
