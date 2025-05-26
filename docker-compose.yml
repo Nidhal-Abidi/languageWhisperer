@@ -1,11 +1,11 @@
 services:
   llm-service:
+    container_name: LLM
     image: ollama/ollama:latest
-    container_name: ollama-service
     ports:
       - "11434:11434" # Ollama API port
     volumes:
-      - ./ollama-data:/root/.ollama # Persist models
+      - ollama-data:/root/.ollama # Persist models
     environment:
       - OLLAMA_HOST=0.0.0.0
     # This script pulls the model on container start
@@ -35,12 +35,10 @@ services:
       start_period: 40s
   # Kokoro TTS Service
   kokoro-tts:
+    container_name: TTS
     image: ghcr.io/remsky/kokoro-fastapi-cpu:latest
-    container_name: kokoro-tts
     ports:
       - "8880:8880" # Expose API port
-    volumes:
-      - ./kokoro-tts/models:/app/src/models # Persist models if needed
     environment:
       - PYTHONDONTWRITEBYTECODE=1
       - PYTHONUNBUFFERED=1
@@ -55,8 +53,8 @@ services:
       start_period: 40s
 
   whisper-stt:
+    container_name: STT
     image: onerahmet/openai-whisper-asr-webservice:latest
-    container_name: whisper-stt
     ports:
       - "9000:9000"
     environment:
@@ -65,7 +63,7 @@ services:
       ASR_DEVICE: cpu # Use cpu since we're not using GPU
       MODEL_IDLE_TIMEOUT: 0 # Keep model loaded indefinitely
     volumes:
-      - ./whisper-cache:/root/.cache # Persist model downloads
+      - whisper-cache:/root/.cache # Persist model downloads
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000"]
@@ -73,19 +71,15 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
-
   # Express.js Backend
   backend:
-    build:
-      context: ./backend
-    container_name: backend
+    container_name: Backend
+    build: ./backend
     ports:
       - "3000:3000"
     volumes:
-      - ./backend:/app
+      - ./backend/src:/app/src
       - ./backend/audio/sessions:/app/audio/sessions
-      - /app/node_modules
-    command: npm run dev
     environment:
       - PORT=3000
       - TTS_SERVICE_URL=http://kokoro-tts:8880
@@ -101,16 +95,12 @@ services:
       timeout: 10s
       retries: 3
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: frontend
+    container_name: Frontend
+    build: ./frontend
     ports:
       - "5173:5173"
     volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    command: npm run dev
+      - ./frontend/src:/app/src
     environment:
       - VITE_BACKEND_URL=http://localhost:3000
     depends_on:
@@ -118,12 +108,12 @@ services:
         condition: service_healthy
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:5173/ || exit 1"]
+      test: ["CMD", "curl", "-f", "http://localhost:5173/"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
 
-networks:
-  default:
-    name: languageWhisperer
+volumes:
+  ollama-data:
+  whisper-cache:

@@ -1,7 +1,7 @@
-FROM node:22-slim
+FROM node:20-alpine
 
-# Install curl for healthcheck
-RUN apt-get update && apt-get install -y curl
+# **Install curl for the healthcheck**
+RUN apk add --no-cache curl
 
 WORKDIR /app
 
@@ -18,14 +18,8 @@ RUN npm run build
 # Create directory for audio files
 RUN mkdir -p /app/audio
 
-RUN ls -la /app
-
 # Expose API port
 EXPOSE 3000
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:3000/health || exit 1
 
 # Start the server
 CMD ["npm", "run", "dev"]

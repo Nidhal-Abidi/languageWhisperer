@@ -1,13 +1,13 @@
 FROM node:20-alpine
 
+# **Install curl for the healthcheck**
+RUN apk add --no-cache curl
+
 WORKDIR /app
 
 # Copy package definitions and install deps
 COPY package.json package-lock.json* ./
 RUN npm install
-
-# **Install curl for the healthcheck**
-RUN apk add --no-cache curl
 
 # Copy rest of the source
 COPY . .
